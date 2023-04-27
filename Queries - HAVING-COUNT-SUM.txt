@@ -1,0 +1,82 @@
+--Using the Animal Database write the SQL queries to satisfy the following. Submit this file with your SQL anwsers via D2L.
+
+
+--1 List the total expert salary amount for each species. Sequence the output, highest to lowest total
+
+SELECT SUM(Salary) AS "Total Salary" , Species FROM Employee 
+WHERE Species IS NOT Null 
+GROUP BY Species 
+ORDER BY SUM(Salary) DESC
+
+--2 List the average employee salary by zoo  but only show the situations where the average is at least 65000
+
+SELECT AVG(Salary) AS "Average Salary" , ZooName FROM Employee
+GROUP BY ZooName 
+HAVING AVG(Salary) >= 65000
+
+--3 List the zooname for zoos than have more than 2 pandas
+
+SELECT COUNT(*) AS "Number of Pandas" , ZooName FROM Animal 
+GROUP BY ZooName 
+HAVING COUNT(*) > 2
+
+--4 List the species details of all animals in the Whipsnade zoo that are endangered. Show each species's details only once
+
+SELECT DISTINCT S.* FROM Species S INNER JOIN Animal A
+ON S.Species = A.Species
+WHERE ZooName = 'Whipsnade' AND Status = 'E' 
+ORDER BY Species
+
+--5 List the species that has more than 2 experts
+
+SELECT COUNT(*) "Number of Experts" , Species FROM Employee
+WHERE Species IS NOT NULL
+GROUP BY Species
+HAVING COUNT(*) > 2
+
+--6 List the details for all zoos in Canada that have animals that are in an endangered species. Show each zoo's details only once.
+
+SELECT DISTINCT Z.* FROM Zoo Z INNER JOIN Animal A
+ON Z.ZooName = A.ZooName INNER JOIN Species S
+ON A.Species = S.Species
+WHERE Status = 'E'
+ORDER BY ZooName
+
+--7. List the details for all lion expert employees who work at zoos that have lions. Only show an employee's details once.
+
+SELECT DISTINCT E.* FROM Employee E INNER JOIN Animal A
+ON E.Species = A.Species
+WHERE E.Species = 'Lion'
+
+--8. List the details for all expert employees who work at zoos 
+--that have animals of their species expertise. Only show an employee's details once.
+-- Sequence the output by employee name within species within zoo name
+
+SELECT DISTINCT E.* FROM Employee E INNER JOIN Animal A
+ON E.Species = A.Species
+WHERE E.Species IS NOT NULL
+ORDER BY ZooName, Species, EmpName
+
+--9. List the species details for the animals that are held in the zoo that employs John. Only show each species'details once.
+
+SELECT DISTINCT S.* FROM Species S INNER JOIN Animal A
+ON S.Species = A.Species INNER JOIN Zoo Z
+ON A.ZooName = Z.ZooName INNER JOIN Employee E
+ON Z.ZooName = E.ZooName
+WHERE E.EmpName = 'John'
+
+--10  i) Add a new Employee to the database
+
+INSERT INTO Employee (EmpNo, EmpName, Species, ZooName, Salary, Gender)
+VALUES ('9999', 'Vic', 'Tiger', 'Toronto', 100000, 'M')
+
+--   ii) Change the expertise and the increase the salary by 10% (use an expression).
+
+UPDATE Employee
+SET Species = 'Lion', Salary = Salary * 1.10
+WHERE EmpName = 'Vic'
+
+--  iii) Delete the Employee added above
+
+DELETE FROM Employee
+WHERE EmpName = 'Vic'

@@ -1,0 +1,119 @@
+--ITM500 - Assignment 1 - Victor Custodio
+
+--1
+SELECT * FROM MOVIE WHERE (mvtitle LIKE '%lord%' OR mvtitle LIKE '%ring%') AND 
+(yearmade >= 1990 AND yearmade <= 2015)
+
+--2.
+SELECT M.* FROM MOVIE M INNER JOIN ROLE R
+ON M.mvnumb = R.mvnumb INNER JOIN ACTOR A
+ON R.actnumb = A.actnumb
+WHERE A.actname = 'Meryl Streep'
+
+--3.
+SELECT actnumb FROM ROLE
+GROUP BY actnumb
+HAVING SUM(mvfee) > 500000
+
+--4.
+SELECT DISTINCT A.* FROM ACTOR A INNER JOIN ROLE R
+ON A.actnumb = R.actnumb INNER JOIN MOVIE M
+ON R.mvnumb = M.mvnumb
+WHERE M.mvtype = 'Action' AND (M.yearmade = 2011 or M.yearmade = 2012)
+
+--5.
+SELECT DISTINCT D.* FROM DIRECTOR D INNER JOIN MOVIE M
+ON D.dirnumb = M.dirnumb
+WHERE M.yearmade = 2010
+ORDER BY D.dirname
+
+--6.
+SELECT COUNT(actnumb) FROM ROLE R INNER JOIN MOVIE M
+ON R.mvnumb = M.mvnumb
+WHERE M.yearmade = 2011
+HAVING COUNT(*) > 2
+
+--7.
+SELECT * FROM DIRECTOR WHERE yearborn < 1960
+ORDER BY yearborn
+
+--8
+SELECT MIN(yearmade) FROM MOVIE
+WHERE mvtype = 'Action'
+
+--9.
+SELECT COUNT(DISTINCT M.mvtype) FROM MOVIE M INNER JOIN ROLE R
+ON M.mvnumb = R.mvnumb INNER JOIN ACTOR A
+ON R.actnumb = A.actnumb
+WHERE A.actname = 'Meryl Streep'
+
+--10.
+SELECT M.* FROM ACTOR A INNER JOIN ROLE R
+ON A.actnumb = R.actnumb INNER JOIN MOVIE M
+ON R.mvnumb = M.mvnumb INNER JOIN DIRECTOR D
+ON M.dirnumb = D.dirnumb
+WHERE D.dirname = 'Lana Wachowski' AND A.actname = 'Keanu Reeves'
+
+--11.
+SELECT COUNT(*) AS 'Number of Actors - Action' FROM ACTOR A INNER JOIN ROLE R
+ON A.actnumb = R.actnumb INNER JOIN MOVIE M
+ON R.mvnumb = M.mvnumb
+WHERE M.mvtype = 'Action' AND M.yearmade > 2010
+
+--12.
+SELECT DISTINCT D.* FROM DIRECTOR D INNER JOIN MOVIE M
+ON D.dirnumb = M.dirnumb
+WHERE mvtype = 'Action'
+ORDER BY D.dirname
+
+--13
+SELECT AVG(mvfee) AS 'Avg. Fee - Action Actors' FROM ROLE R INNER JOIN MOVIE M
+ON R.mvnumb = M.mvnumb
+WHERE m.mvtype = 'Action' and m.yearmade = 2010
+
+--14.
+SELECT COUNT(*) AS 'Number of Movies' , mvtype FROM MOVIE
+GROUP BY mvtype
+ORDER BY COUNT(*) DESC
+
+--15.
+SELECT mvtype FROM MOVIE
+WHERE yearmade >= 2010 and yearmade <= 2012
+GROUP BY mvtype
+HAVING COUNT (*) >= 2 OR COUNT(*) <= 4
+
+--16
+SELECT DISTINCT A.* FROM ACTOR A INNER JOIN ROLE R
+ON A.actnumb = R.actnumb INNER JOIN MOVIE M
+ON R.mvnumb = M.mvnumb
+WHERE M.mvtype = 'Action' AND (M.noms > 3 OR M.awrds > 2)
+
+--17.
+SELECT COUNT(*) AS 'Number of Roles' , actname FROM ACTOR A INNER JOIN ROLE R
+ON A.actnumb = R.actnumb INNER JOIN MOVIE M
+ON R.mvnumb = M.mvnumb
+WHERE M.yearmade = 2012
+GROUP BY actname
+HAVING SUM(mvfee) > 1000000
+
+--18
+SELECT DISTINCT * FROM DIRECTOR D INNER JOIN MOVIE M
+ON D.dirnumb = M.dirnumb INNER JOIN ROLE R
+ON M.mvnumb = R.mvnumb INNER JOIN ACTOR A
+ON R.actnumb = A.actnumb
+WHERE A.actname = 'Meryl Streep'
+
+--19.
+SELECT COUNT(*) FROM ACTOR
+WHERE birthplace = 'Toronto' AND yeardied IS NULL
+
+--20.
+INSERT INTO MOVIE (mvnumb, mvtitle, yearmade, mvtype, noms, awrds, dirnumb)
+VALUES (3050, 'New Movie', 2021, 'Drama', 2, 0, 2004)
+
+UPDATE MOVIE
+SET noms = noms * 2
+WHERE mvnumb = 3050
+
+DELETE FROM MOVIE
+WHERE mvnumb = 3050

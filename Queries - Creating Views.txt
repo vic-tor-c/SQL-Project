@@ -1,0 +1,74 @@
+--Using the Animal2 DB undertake the following 
+
+--1) Create a view called V1 that will show a count
+--of experts and their average and maximum salary amount for each Species. Note NULL is not a species.
+
+go
+
+DROP VIEW V1
+
+go
+
+CREATE VIEW V1( Species, ExpertCnt, SalaryAvg, SalaryMax) AS
+(SELECT Species, COUNT(*), AVG(Salary), MAX(Salary)
+FROM Employee
+WHERE Species IS NOT NULL
+GROUP BY Species)
+
+go
+
+SELECT * FROM V1
+
+--2) Create a view called V2 which will have for each Species Status a count of the number
+--species and the average, maximum and minimum value of the estimated numbers in the wild
+
+go
+
+CREATE VIEW V2(Status, EstCount, EstAvg, EstMax, EstMin) AS
+(SELECT Status, COUNT(*), AVG(EstNoInWild), MAX(EstNoInWild), Min(EstNoInWild)
+FROM Species
+GROUP BY Status)
+
+go
+
+SELECT * FROM V2
+
+--3) Create a view called V3 that will show a count of animals by zoo.
+
+go
+
+CREATE VIEW V3(ZooName, CountAni) AS
+(SELECT ZooName, COUNT(*)
+FROM Animal
+GROUP BY ZooName)
+
+go
+
+SELECT * FROM V3
+
+--Then using these views write the following queries
+
+--4) List the details for the zoo that has had the highest number of animals
+
+SELECT * From Zoo Z INNER JOIN V3
+ON Z.ZooName = V3.ZooName
+WHERE CountAni IN (SELECT MAX(CountAni) FROM V3)
+
+--5) List the species details for the species whose has an estimated number in the wild below the average for its status
+
+SELECT S.* FROM Species S INNER JOIN V2
+ON S.Status = V2.Status
+WHERE S.EstNoInWild < V2.EstAvg
+
+--6) List the Employee details for any Employee that has the highest salary for their species expertise
+
+SELECT E.* FROM Employee E INNER JOIN V1
+ON E.Species = V1.Species
+WHERE E.Salary = V1.SalaryMax
+
+--7) List the details of the animals held for the species that have the lowest estimate number for their status
+
+SELECT A.* FROM Animal A INNER JOIN Species S
+ON A.Species = S.Species INNER JOIN V2
+ON S.Status = V2.Status
+WHERE S.EstNoInWild = V2.EstMin
